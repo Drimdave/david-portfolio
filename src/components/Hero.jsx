@@ -40,6 +40,7 @@ const Hero = () => {
   useGSAP(
     () => {
       if (hasClicked) {
+        const videoElement = nextVdRef.current;
         gsap.set("#next-video", { visibility: "visible" });
         gsap.to("#next-video", {
           transformOrigin: "center center",
@@ -48,7 +49,15 @@ const Hero = () => {
           height: "100%",
           duration: 1,
           ease: "power1.inOut",
-          onStart: () => nextVdRef.current.play(),
+          onStart: () => {
+            if (videoElement) {
+              videoElement.pause(); // Prevent any ongoing play actions
+              videoElement.currentTime = 0; // Reset playback
+              videoElement.play().catch((error) => {
+                console.error("Video play failed:", error);
+              });
+            }
+          },
         });
         gsap.from("#current-video", {
           transformOrigin: "center center",
@@ -88,7 +97,7 @@ const Hero = () => {
     const rect = e.currentTarget.getBoundingClientRect();
     setMousePosition({
       x: e.clientX - rect.left,
-      y: e.clientY - rect.top
+      y: e.clientY - rect.top,
     });
   };
 
@@ -101,17 +110,30 @@ const Hero = () => {
 
       window.scrollTo({
         top: offsetPosition,
-        behavior: "smooth"
+        behavior: "smooth",
       });
     }
   };
 
   return (
     <div className="relative h-dvh w-screen overflow-x-hidden" onMouseMove={handleMouseMove}>
+      {/* Hidden image layer */}
+      <div className="hidden-image absolute top-0 left-0 w-full h-full z-30 pointer-events-none">
+        <div
+          style={{
+            clipPath: `circle(100px at ${mousePosition.x}px ${mousePosition.y}px)`,
+          }}
+        >
+          <img
+            src="/your-hidden-image.jpg"
+            alt="Hidden"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      </div>
 
       {loading && (
         <div className="flex-center absolute z-[100] h-dvh w-screen overflow-hidden bg-violet-50">
-          {/* https://uiverse.io/G4b413l/tidy-walrus-92 */}
           <div className="three-body">
             <div className="three-body__dot"></div>
             <div className="three-body__dot"></div>
