@@ -1,36 +1,29 @@
 // Hero.jsx
 
 import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/all";
-import { useEffect, useRef, useState } from "react";
-
+import { useEffect, useState } from "react";
 import Button from "./Button";
-import VideoPreview from "./VideoPreview";
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin();
 
 const Hero = () => {
   const [currentIndex, setCurrentIndex] = useState(1);
-  const [hasClicked, setHasClicked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadedVideos, setLoadedVideos] = useState(0);
 
-  const totalVideos = 4;
-
   const videoUrls = [
-    "https://res.cloudinary.com/dzihom5jb/video/upload/v1739181160/hero-1_hznmfy.mp4",
-    "https://res.cloudinary.com/dzihom5jb/video/upload/v1739181150/hero-2_wddwtr.mp4",
-    "https://res.cloudinary.com/dzihom5jb/video/upload/v1739181022/hero-3_vav6yo.mp4",
-    "https://res.cloudinary.com/dzihom5jb/video/upload/v1739181431/hero-4_rhzvlb.mp4",
+    "https://res.cloudinary.com/dzihom5jb/video/upload/v1739181160/hero-1_hznmfy.mp4", // Video 1
+    "https://res.cloudinary.com/dzihom5jb/video/upload/v1739181150/hero-2_wddwtr.mp4", // Video 2
   ];
 
+  // Get the current video source
   const getVideoSrc = (index) => {
     const url = videoUrls[(index - 1) % videoUrls.length];
     console.log("Current video src:", url); // Debugging
     return url;
   };
 
+  // Handle video load and update loading state
   const handleVideoLoad = () => {
     console.log("Video loaded"); // Debugging
     setLoadedVideos((prev) => prev + 1);
@@ -38,14 +31,14 @@ const Hero = () => {
 
   useEffect(() => {
     console.log("Loaded videos:", loadedVideos); // Debugging
-    if (loadedVideos === totalVideos) {
+    if (loadedVideos === videoUrls.length) {
       setLoading(false);
     }
   }, [loadedVideos]);
 
-  const handleMiniVdClick = () => {
-    setHasClicked(true);
-    setCurrentIndex((prevIndex) => (prevIndex % totalVideos) + 1);
+  // Handle click to switch between videos
+  const handleVideoClick = () => {
+    setCurrentIndex((prevIndex) => (prevIndex % 2) + 1);
   };
 
   return (
@@ -63,24 +56,15 @@ const Hero = () => {
 
       {/* Video frame */}
       <div id="video-frame" className="relative z-10 h-dvh w-screen overflow-hidden rounded-lg bg-blue-75">
+        {/* Current video */}
         <video
           src={getVideoSrc(currentIndex)}
           muted
           playsInline
           autoPlay
           loop
-          style={{ visibility: "visible", opacity: 1 }} // Ensuring video is visible
-          onLoadedData={handleVideoLoad}
-        />
-
-        {/* Preloaded next video */}
-        <video
-          src={getVideoSrc((currentIndex % totalVideos) + 1)}
-          muted
-          playsInline
-          autoPlay
-          loop
-          style={{ visibility: "visible", opacity: 1 }} // Ensuring visibility
+          className="absolute left-0 top-0 size-full object-cover object-center"
+          style={{ visibility: "visible", opacity: 1 }}
           onLoadedData={handleVideoLoad}
         />
       </div>
@@ -100,14 +84,9 @@ const Hero = () => {
           {/* Buttons */}
           <div className="flex items-center gap-4">
             <Button
-              title="View Projects"
-              onClick={() => console.log("View Projects clicked")} // Example action
+              title="Switch Video"
+              onClick={handleVideoClick} // Switch between video 1 and 2
               containerClass="bg-yellow-300 text-black"
-            />
-            <Button
-              title="Contact Me"
-              onClick={() => console.log("Contact Me clicked")} // Example action
-              containerClass="bg-white/10 backdrop-blur-sm"
             />
           </div>
         </div>
