@@ -1,3 +1,5 @@
+// Hero.jsx
+
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/all";
@@ -21,19 +23,29 @@ const Hero = () => {
 
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
+  const videoUrls = [
+    "https://res.cloudinary.com/dzihom5jb/video/upload/v1739181160/hero-1_hznmfy.mp4",
+    "https://res.cloudinary.com/dzihom5jb/video/upload/v1739181150/hero-2_wddwtr.mp4",
+    "https://res.cloudinary.com/dzihom5jb/video/upload/v1739181022/hero-3_vav6yo.mp4",
+    "https://res.cloudinary.com/dzihom5jb/video/upload/v1739181431/hero-4_rhzvlb.mp4",
+  ];
+
+  const getVideoSrc = (index) => {
+    return videoUrls[(index - 1) % videoUrls.length];
+  };
+
   const handleVideoLoad = () => {
     setLoadedVideos((prev) => prev + 1);
   };
 
   useEffect(() => {
-    if (loadedVideos === totalVideos - 1) {
+    if (loadedVideos === totalVideos) {
       setLoading(false);
     }
   }, [loadedVideos]);
 
   const handleMiniVdClick = () => {
     setHasClicked(true);
-
     setCurrentIndex((prevIndex) => (prevIndex % totalVideos) + 1);
   };
 
@@ -82,17 +94,11 @@ const Hero = () => {
     });
   });
 
-  const getVideoSrc = (index) => {
-    const cloudName = "dzihom5jb";
-    const videoOptimization = "q_auto,f_auto,c_scale,w_1280,vc_auto";
-    return `https://res.cloudinary.com/${cloudName}/video/upload/${videoOptimization}/hero-${index}.mp4`;
-  };
-
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     setMousePosition({
       x: e.clientX - rect.left,
-      y: e.clientY - rect.top
+      y: e.clientY - rect.top,
     });
   };
 
@@ -105,18 +111,15 @@ const Hero = () => {
 
       window.scrollTo({
         top: offsetPosition,
-        behavior: "smooth"
+        behavior: "smooth",
       });
     }
   };
 
   return (
     <div className="relative h-dvh w-screen overflow-x-hidden" onMouseMove={handleMouseMove}>
-      {/* Removed the hidden image layer */}
-
       {loading && (
         <div className="flex-center absolute z-[100] h-dvh w-screen overflow-hidden bg-violet-50">
-          {/* https://uiverse.io/G4b413l/tidy-walrus-92 */}
           <div className="three-body">
             <div className="three-body__dot"></div>
             <div className="three-body__dot"></div>
@@ -125,10 +128,7 @@ const Hero = () => {
         </div>
       )}
 
-      <div
-        id="video-frame"
-        className="relative z-10 h-dvh w-screen overflow-hidden rounded-lg bg-blue-75"
-      >
+      <div id="video-frame" className="relative z-10 h-dvh w-screen overflow-hidden rounded-lg bg-blue-75">
         <div>
           <div className="mask-clip-path absolute-center absolute z-50 size-64 cursor-pointer overflow-hidden rounded-lg">
             <VideoPreview>
@@ -159,9 +159,7 @@ const Hero = () => {
             onLoadedData={handleVideoLoad}
           />
           <video
-            src={getVideoSrc(
-              currentIndex === totalVideos - 1 ? 1 : currentIndex
-            )}
+            src={getVideoSrc(currentIndex === totalVideos - 1 ? 1 : currentIndex)}
             autoPlay
             loop
             muted
@@ -176,17 +174,11 @@ const Hero = () => {
 
         <div className="absolute left-0 top-0 z-40 size-full">
           <div className="mt-16 sm:mt-24 px-4 sm:px-10">
-            <h1 className="special-font hero-heading text-blue-100 
-              text-4xl sm:text-6xl md:text-7xl lg:text-9xl 
-              leading-tight tracking-tight"
-            >
+            <h1 className="special-font hero-heading text-blue-100 text-4xl sm:text-6xl md:text-7xl lg:text-9xl leading-tight tracking-tight">
               David <b>Oyelade</b>
             </h1>
 
-            <p className="mb-8 max-w-md font-robert-regular text-blue-100 
-              text-base sm:text-lg md:text-xl 
-              leading-relaxed tracking-wide"
-            >
+            <p className="mb-8 max-w-md font-robert-regular text-blue-100 text-base sm:text-lg md:text-xl leading-relaxed tracking-wide">
               Full Stack Software Engineer <br className="hidden sm:block" />
               Building high-performance web and mobile applications with AI integration
             </p>
@@ -195,12 +187,12 @@ const Hero = () => {
               <Button
                 title="View Projects"
                 leftIcon={<TiLocationArrow />}
-                onClick={(e) => handleScroll(e, '#projects', -50)}
+                onClick={(e) => handleScroll(e, "#projects", -50)}
                 containerClass="bg-yellow-300 text-black"
               />
               <Button
                 title="Contact Me"
-                onClick={(e) => handleScroll(e, '#contact', -50)}
+                onClick={(e) => handleScroll(e, "#contact", -50)}
                 containerClass="bg-white/10 backdrop-blur-sm"
               />
             </div>
