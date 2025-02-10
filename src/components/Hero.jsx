@@ -10,33 +10,39 @@ import VideoPreview from "./VideoPreview";
 gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
-  const [currentIndex, setCurrentIndex] = useState(1);
+  const [currentIndex, setCurrentIndex] = useState(1); // Handle 2 videos only
   const [hasClicked, setHasClicked] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [loadedVideos, setLoadedVideos] = useState(0);
 
-  const totalVideos = 4;
+  const totalVideos = 2; // Restrict total videos to 2
   const nextVdRef = useRef(null);
 
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
+  // Video URLs
+  const getVideoSrc = (index) => `videos/hero-${index}.mp4`;
+
+  // Handle video loading
   const handleVideoLoad = () => {
     setLoadedVideos((prev) => prev + 1);
   };
 
+  // Update loading state once all videos are loaded
   useEffect(() => {
-    if (loadedVideos === totalVideos - 1) {
+    if (loadedVideos === totalVideos) {
       setLoading(false);
     }
   }, [loadedVideos]);
 
+  // Handle video switch on click
   const handleMiniVdClick = () => {
     setHasClicked(true);
-
-    setCurrentIndex((prevIndex) => (prevIndex % totalVideos) + 1);
+    setCurrentIndex((prevIndex) => (prevIndex % totalVideos) + 1); // Toggle between video 1 and 2
   };
 
+  // GSAP Animations for video transitions
   useGSAP(
     () => {
       if (hasClicked) {
@@ -58,12 +64,10 @@ const Hero = () => {
         });
       }
     },
-    {
-      dependencies: [currentIndex],
-      revertOnUpdate: true,
-    }
+    { dependencies: [currentIndex], revertOnUpdate: true }
   );
 
+  // GSAP animations for video frame on scroll
   useGSAP(() => {
     gsap.set("#video-frame", {
       clipPath: "polygon(14% 0, 72% 0, 88% 90%, 0 95%)",
@@ -82,16 +86,16 @@ const Hero = () => {
     });
   });
 
-  const getVideoSrc = (index) => `videos/hero-${index}.mp4`;
-
+  // Handle mouse movement
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     setMousePosition({
       x: e.clientX - rect.left,
-      y: e.clientY - rect.top
+      y: e.clientY - rect.top,
     });
   };
 
+  // Smooth scroll to sections
   const handleScroll = (e, targetId, offset = -100) => {
     e.preventDefault();
     const element = document.querySelector(targetId);
@@ -101,18 +105,16 @@ const Hero = () => {
 
       window.scrollTo({
         top: offsetPosition,
-        behavior: "smooth"
+        behavior: "smooth",
       });
     }
   };
 
   return (
     <div className="relative h-dvh w-screen overflow-x-hidden" onMouseMove={handleMouseMove}>
-      {/* Removed the hidden image layer */}
-
+      {/* Loading spinner */}
       {loading && (
         <div className="flex-center absolute z-[100] h-dvh w-screen overflow-hidden bg-violet-50">
-          {/* https://uiverse.io/G4b413l/tidy-walrus-92 */}
           <div className="three-body">
             <div className="three-body__dot"></div>
             <div className="three-body__dot"></div>
@@ -121,11 +123,13 @@ const Hero = () => {
         </div>
       )}
 
+      {/* Video frame */}
       <div
         id="video-frame"
         className="relative z-10 h-dvh w-screen overflow-hidden rounded-lg bg-blue-75"
       >
         <div>
+          {/* Mini video for transition */}
           <div className="mask-clip-path absolute-center absolute z-50 size-64 cursor-pointer overflow-hidden rounded-lg">
             <VideoPreview>
               <div
@@ -145,6 +149,7 @@ const Hero = () => {
             </VideoPreview>
           </div>
 
+          {/* Main video */}
           <video
             ref={nextVdRef}
             src={getVideoSrc(currentIndex)}
@@ -155,9 +160,7 @@ const Hero = () => {
             onLoadedData={handleVideoLoad}
           />
           <video
-            src={getVideoSrc(
-              currentIndex === totalVideos - 1 ? 1 : currentIndex
-            )}
+            src={getVideoSrc(currentIndex)}
             autoPlay
             loop
             muted
@@ -166,21 +169,22 @@ const Hero = () => {
           />
         </div>
 
+        {/* Heading */}
         <h1 className="special-font hero-heading absolute bottom-5 right-5 z-40 text-blue-75 text-4xl sm:text-5xl md:text-7xl lg:text-9xl">
           PORTFOLIO
         </h1>
 
         <div className="absolute left-0 top-0 z-40 size-full">
           <div className="mt-16 sm:mt-24 px-4 sm:px-10">
-            <h1 className="special-font hero-heading text-blue-100 
-              text-4xl sm:text-6xl md:text-7xl lg:text-9xl 
+            <h1
+              className="special-font hero-heading text-blue-100 text-4xl sm:text-6xl md:text-7xl lg:text-9xl 
               leading-tight tracking-tight"
             >
               David <b>Oyelade</b>
             </h1>
 
-            <p className="mb-8 max-w-md font-robert-regular text-blue-100 
-              text-base sm:text-lg md:text-xl 
+            <p
+              className="mb-8 max-w-md font-robert-regular text-blue-100 text-base sm:text-lg md:text-xl 
               leading-relaxed tracking-wide"
             >
               Full Stack Software Engineer <br className="hidden sm:block" />
@@ -191,22 +195,18 @@ const Hero = () => {
               <Button
                 title="View Projects"
                 leftIcon={<TiLocationArrow />}
-                onClick={(e) => handleScroll(e, '#projects', -50)}
+                onClick={(e) => handleScroll(e, "#projects", -50)}
                 containerClass="bg-yellow-300 text-black"
               />
               <Button
                 title="Contact Me"
-                onClick={(e) => handleScroll(e, '#contact', -50)}
+                onClick={(e) => handleScroll(e, "#contact", -50)}
                 containerClass="bg-white/10 backdrop-blur-sm"
               />
             </div>
           </div>
         </div>
       </div>
-
-      <h1 className="special-font hero-heading absolute bottom-5 right-5 text-black text-4xl sm:text-5xl md:text-7xl lg:text-9xl">
-        PORTFOLIO
-      </h1>
     </div>
   );
 };
