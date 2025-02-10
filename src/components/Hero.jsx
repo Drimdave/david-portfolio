@@ -83,9 +83,9 @@ const Hero = () => {
   });
 
   const getVideoSrc = (index) => {
-    const cloudinaryBaseUrl = "https://res.cloudinary.com/847725341257885/video/upload";
-    const videoOptimization = "q_auto,f_auto,c_scale,w_1280,vc_auto"; // added vc_auto for video codec optimization
-    return `${cloudinaryBaseUrl}/${videoOptimization}/hero-${index}.mp4`;
+    const cloudName = "dzihom5jb";
+    const videoOptimization = "q_auto,f_auto,c_scale,w_1280,vc_auto";
+    return `https://res.cloudinary.com/${cloudName}/video/upload/${videoOptimization}/hero-${index}.mp4`;
   };
 
   const handleMouseMove = (e) => {
