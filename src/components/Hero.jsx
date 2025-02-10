@@ -13,12 +13,10 @@ gsap.registerPlugin(ScrollTrigger);
 const Hero = () => {
   const [currentIndex, setCurrentIndex] = useState(1);
   const [hasClicked, setHasClicked] = useState(false);
-
   const [loading, setLoading] = useState(true);
   const [loadedVideos, setLoadedVideos] = useState(0);
 
   const totalVideos = 4;
-  const nextVdRef = useRef(null);
 
   const videoUrls = [
     "https://res.cloudinary.com/dzihom5jb/video/upload/v1739181160/hero-1_hznmfy.mp4",
@@ -27,51 +25,28 @@ const Hero = () => {
     "https://res.cloudinary.com/dzihom5jb/video/upload/v1739181431/hero-4_rhzvlb.mp4",
   ];
 
-  // Function to get the current video URL
   const getVideoSrc = (index) => {
     const url = videoUrls[(index - 1) % videoUrls.length];
-    console.log("Current video src:", url); // Debug log
+    console.log("Current video src:", url); // Debugging
     return url;
   };
 
-  // Update loadedVideos when a video is successfully loaded
   const handleVideoLoad = () => {
-    console.log("Video loaded"); // Debug log
+    console.log("Video loaded"); // Debugging
     setLoadedVideos((prev) => prev + 1);
   };
 
-  // Triggered when all videos are loaded
   useEffect(() => {
-    console.log("Loaded videos:", loadedVideos); // Debug log
+    console.log("Loaded videos:", loadedVideos); // Debugging
     if (loadedVideos === totalVideos) {
       setLoading(false);
     }
   }, [loadedVideos]);
 
-  // Handle click event for video interaction
   const handleMiniVdClick = () => {
     setHasClicked(true);
     setCurrentIndex((prevIndex) => (prevIndex % totalVideos) + 1);
   };
-
-  // Add animations for GSAP (can temporarily disable for debugging)
-  useGSAP(() => {
-    gsap.set("#video-frame", {
-      clipPath: "polygon(14% 0, 72% 0, 88% 90%, 0 95%)",
-      borderRadius: "0% 0% 40% 10%",
-    });
-    gsap.from("#video-frame", {
-      clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-      borderRadius: "0% 0% 0% 0%",
-      ease: "power1.inOut",
-      scrollTrigger: {
-        trigger: "#video-frame",
-        start: "center center",
-        end: "bottom center",
-        scrub: true,
-      },
-    });
-  });
 
   return (
     <div className="relative h-dvh w-screen overflow-x-hidden">
@@ -88,24 +63,24 @@ const Hero = () => {
 
       {/* Video frame */}
       <div id="video-frame" className="relative z-10 h-dvh w-screen overflow-hidden rounded-lg bg-blue-75">
-        {/* Current video */}
         <video
           src={getVideoSrc(currentIndex)}
           muted
+          playsInline
           autoPlay
           loop
-          className="absolute left-0 top-0 size-full object-cover object-center"
+          style={{ visibility: "visible", opacity: 1 }} // Ensuring video is visible
           onLoadedData={handleVideoLoad}
         />
 
-        {/* Next video for animation */}
+        {/* Preloaded next video */}
         <video
-          ref={nextVdRef}
           src={getVideoSrc((currentIndex % totalVideos) + 1)}
           muted
+          playsInline
           autoPlay
           loop
-          className="absolute-center invisible absolute z-20 size-64 object-cover object-center"
+          style={{ visibility: "visible", opacity: 1 }} // Ensuring visibility
           onLoadedData={handleVideoLoad}
         />
       </div>
