@@ -59,7 +59,7 @@ const Contact = () => {
             title="Send Email"
             leftIcon={<TiLocationArrow />}
             containerClass="mt-10 bg-yellow-300 text-black hover:scale-105 transition-transform"
-            onClick={() => window.location.href = 'mailto:davidoyelade2024@gmail.com'}
+            onClick={() => window.location.href = 'mailto:oyeladedavid1@gmail.com'}
           />
         </motion.div>
       </div>
